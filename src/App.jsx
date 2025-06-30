@@ -16,6 +16,7 @@ export default function App() {
           <Route path="/dates" element={<ProtectedRoute><DatesPage /></ProtectedRoute>} />
           <Route path="/dates/:id" element={<ProtectedRoute><DateForm /></ProtectedRoute>} />
           <Route path="*" element={<Navigate to="/login" replace />} />
+          <Route path="/test" element={<div style={{ color: "red" }}>Test OK</div>} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

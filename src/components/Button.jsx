@@ -1,29 +1,31 @@
-// src/components/Button.jsx
-import React from "react";
+import styled from 'styled-components';
+import isPropValid from '@emotion/is-prop-valid';
 
-export function Button({
-  children,
-  variant = "primary", // "primary" | "secondary" | "unset"
-  ...props
-}) {
-  const base = "inline-flex items-center justify-center text-base font-semibold rounded-lg transition ";
-  const styles = {
-    primary: `
-      bg-arcadePink text-white 
-      hover:bg-arcadeDeepPink active:scale-95 
-      focus:ring-4 focus:ring-arcadePink/50`,
-    secondary: `
-      bg-arcadeGold text-arcadeBlack 
-      hover:bg-yellow-400 active:scale-95 
-      focus:ring-4 focus:ring-arcadeGold/50`,
-    unset: `text-arcadePink hover:text-arcadeDeepPink`,
-  };
+export const Button = styled('button').withConfig({
+  shouldForwardProp: (prop) => isPropValid(prop) && prop !== 'variant',
+})`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: ${({ theme }) => theme.spacing.md};
+  background-color: ${({ theme, variant }) =>
+    variant === 'secondary' ? theme.colors.arcadeGold : theme.colors.arcadePink};
+  color: ${({ variant, theme }) =>
+    variant === 'secondary' ? theme.colors.arcadeBlack : '#fff'};
+  border: none;
+  border-radius: ${({ theme }) => theme.radii.md};
+  font-size: ${({ theme }) => theme.fontSizes.base};
+  cursor: pointer;
+  transition: transform 0.1s ease, background-color 0.2s;
 
-  return (
-    <button className={base + styles[variant]} {...props}>
-      {children}
-      {/* petite icône animée en fin de texte */}
-      <span className="ml-2 transform transition-transform group-hover:translate-x-1">➔</span>
-    </button>
-  );
-}
+  &:hover {
+    background-color: ${({ theme, variant }) =>
+      variant === 'secondary' ? '#ffcf33' : theme.colors.arcadeDeepPink};
+  }
+  &:active {
+    transform: scale(0.95);
+  }
+  &:focus {
+    outline: 2px solid ${({ theme }) => theme.colors.arcadeGold};
+  }
+`;
