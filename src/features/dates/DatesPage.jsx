@@ -52,7 +52,7 @@ const Loading = styled.p`
 `;
 
 export default function DatesPage() {
-  const { dates, loading } = useDates();
+  const dates  = useDates();
   const navigate = useNavigate();
 
   // Delete a date document
@@ -67,9 +67,6 @@ export default function DatesPage() {
     navigate(`/dates/${id}`);
   };
 
-  if (loading) {
-    return <Loading>Chargement…</Loading>;
-  }
 
   return (
     <Container>

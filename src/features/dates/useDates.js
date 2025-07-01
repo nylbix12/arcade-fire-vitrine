@@ -1,16 +1,38 @@
 import { useState, useEffect } from "react";
-import { collection, onSnapshot, query, orderBy } from "firebase/firestore";
+import {
+  collection,
+  query,
+  orderBy,
+  getDocs,
+  onSnapshot
+} from "firebase/firestore";
 import { db } from "../../services/firebase";
+
 export function useDates() {
   const [dates, setDates] = useState([]);
-  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    const q = query(collection(db, "dates"), orderBy("date", "asc"));
-    const unsub = onSnapshot(q, snap => {
-      setDates(snap.docs.map(d => ({ id: d.id, ...d.data() })));
-      setLoading(false);
+    const q = query(
+      collection(db, "dates"),
+      orderBy("date", "asc")
+    );
+
+    // 1) fetch initial data immediately
+    getDocs(q).then(snapshot => {
+      setDates(
+        snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+      );
     });
-    return unsub;
+
+    // 2) then listen for live updates
+    const unsubscribe = onSnapshot(q, snapshot => {
+      setDates(
+        snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+      );
+    });
+
+    return unsubscribe;
   }, []);
-  return { dates, loading };
+
+  return dates;
 }
