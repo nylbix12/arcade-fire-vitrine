@@ -6,12 +6,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import { deleteDoc, doc } from 'firebase/firestore';
 import { db } from '../../services/firebase';
 import { Button } from '../../components/Button';
+import { useAuth } from '../../context/AuthContext'; // 👈 Assure-toi que ce chemin est correct
 
 // Styled components
 const Container = styled.div`
   max-width: 1200px;
   margin: 0 auto;
   padding: ${({ theme }) => theme.spacing.lg};
+  position: relative;
 `;
 
 const GlobalHeader = styled.header`
@@ -51,22 +53,28 @@ const Loading = styled.p`
   padding-top: ${({ theme }) => theme.spacing.lg};
 `;
 
-export default function DatesPage() {
-  const dates  = useDates();
-  const navigate = useNavigate();
+// ✅ Nouveau : bouton fixe en bas à droite
+const FixedLogout = styled.div`
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 100;
+`;
 
-  // Delete a date document
+export default function DatesPage() {
+  const dates = useDates();
+  const navigate = useNavigate();
+  const { logout } = useAuth(); // 👈 Récupère la fonction logout
+
   const handleDelete = async (id) => {
     if (window.confirm('Supprimer cette date ?')) {
       await deleteDoc(doc(db, 'dates', id));
     }
   };
 
-  // Navigate to edit form
   const handleEdit = (id) => {
     navigate(`/dates/${id}`);
   };
-
 
   return (
     <Container>
@@ -81,16 +89,28 @@ export default function DatesPage() {
         </Link>
       </PageHeader>
 
-      <Grid>
-        {dates.map((d) => (
-          <DateCard
-            key={d.id}
-            {...d}
-            onEdit={() => handleEdit(d.id)}
-            onDelete={() => handleDelete(d.id)}
-          />
-        ))}
-      </Grid>
+      {dates.length === 0 ? (
+  <Loading>🎤 Aucune date de tournée enregistrée pour le moment.</Loading>
+) : (
+  <Grid>
+    {dates.map((d) => (
+      <DateCard
+        key={d.id}
+        {...d}
+        onEdit={() => handleEdit(d.id)}
+        onDelete={() => handleDelete(d.id)}
+      />
+    ))}
+  </Grid>
+)}
+
+
+      {/* ✅ Bouton "Se déconnecter" en bas à droite */}
+      <FixedLogout>
+        <Button variant="secondary" onClick={logout}>
+          Se déconnecter
+        </Button>
+      </FixedLogout>
     </Container>
   );
 }
