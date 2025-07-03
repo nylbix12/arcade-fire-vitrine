@@ -11,7 +11,7 @@ const cfg = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 console.log("API KEY:", import.meta.env.VITE_FIREBASE_API_KEY);
-
+  
 const app = initializeApp(cfg);
 export const db = getFirestore(app);
 export const auth = getAuth(app);

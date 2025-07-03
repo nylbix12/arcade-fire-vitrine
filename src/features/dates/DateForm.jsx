@@ -16,7 +16,7 @@ import { Button } from '../../components/Button';
 const Wrapper = styled.div`
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5); /* arrière-plan assombri */
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -52,8 +52,26 @@ const InputField = styled.input`
   }
 `;
 
+// ✅ Champ select stylisé dynamiquement selon la valeur du statut
 const SelectField = styled.select`
-  ${InputField}
+  width: 100%;
+  padding: ${({ theme }) => theme.spacing.sm};
+  border: 2px solid ${({ theme }) => theme.colors.arcadePink};
+  border-radius: ${({ theme }) => theme.radii.md};
+  font-size: ${({ theme }) => theme.fontSizes.base};
+  font-weight: bold;
+  color: ${({ statut }) =>
+    statut === 'annulé' ? '#d9534f' :
+    statut === 'sold-out' ? '#f0ad4e' :
+    '#0275d8'};
+  background-color: ${({ statut }) =>
+    statut === 'annulé' ? '#ffe5e5' :
+    statut === 'sold-out' ? '#fff3cd' :
+    '#e0f7fa'};
+  &:focus {
+    outline: none;
+    border-color: ${({ theme }) => theme.colors.arcadeDeepPink};
+  }
 `;
 
 const ButtonGroup = styled.div`
@@ -130,11 +148,12 @@ export default function DateForm() {
 
         <SelectField
           value={form.statut}
+          statut={form.statut}
           onChange={(e) => setForm((f) => ({ ...f, statut: e.target.value }))}
         >
-          <option>à venir</option>
-          <option>sold-out</option>
-          <option>annulé</option>
+          <option value="à venir">⏳ À venir</option>
+          <option value="sold-out">🎟️ Sold-out</option>
+          <option value="annulé">❌ Annulé</option>
         </SelectField>
 
         <ButtonGroup>

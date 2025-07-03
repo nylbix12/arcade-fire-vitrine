@@ -6,9 +6,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import { deleteDoc, doc } from 'firebase/firestore';
 import { db } from '../../services/firebase';
 import { Button } from '../../components/Button';
-import { useAuth } from '../../context/AuthContext'; // 👈 Assure-toi que ce chemin est correct
+import { useAuth } from '../../context/AuthContext'; 
 
-// Styled components
+
 const Container = styled.div`
   max-width: 1200px;
   margin: 0 auto;
@@ -53,7 +53,7 @@ const Loading = styled.p`
   padding-top: ${({ theme }) => theme.spacing.lg};
 `;
 
-// ✅ Nouveau : bouton fixe en bas à droite
+// Nouveau : bouton fixe en bas à droite
 const FixedLogout = styled.div`
   position: fixed;
   bottom: 20px;
@@ -64,7 +64,8 @@ const FixedLogout = styled.div`
 export default function DatesPage() {
   const dates = useDates();
   const navigate = useNavigate();
-  const { logout } = useAuth(); // 👈 Récupère la fonction logout
+  const { logout } = useAuth(); //  Récupère la fonction logout 
+    
 
   const handleDelete = async (id) => {
     if (window.confirm('Supprimer cette date ?')) {
@@ -105,7 +106,7 @@ export default function DatesPage() {
 )}
 
 
-      {/* ✅ Bouton "Se déconnecter" en bas à droite */}
+      {/*  Bouton "Se déconnecter" en bas à droite */}
       <FixedLogout>
         <Button variant="secondary" onClick={logout}>
           Se déconnecter
