@@ -7,7 +7,10 @@ import { deleteDoc, doc } from 'firebase/firestore';
 import { db } from '../../services/firebase';
 import { Button } from '../../components/Button';
 import { useAuth } from '../../context/AuthContext'; 
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
 
+const MySwal = withReactContent(Swal);
 
 const Container = styled.div`
   max-width: 1200px;
@@ -53,7 +56,6 @@ const Loading = styled.p`
   padding-top: ${({ theme }) => theme.spacing.lg};
 `;
 
-// Nouveau : bouton fixe en bas à droite
 const FixedLogout = styled.div`
   position: fixed;
   bottom: 20px;
@@ -64,12 +66,23 @@ const FixedLogout = styled.div`
 export default function DatesPage() {
   const dates = useDates();
   const navigate = useNavigate();
-  const { logout } = useAuth(); //  Récupère la fonction logout 
-    
+  const { logout } = useAuth();
 
   const handleDelete = async (id) => {
-    if (window.confirm('Supprimer cette date ?')) {
+    const result = await MySwal.fire({
+      title: 'Supprimer cette date ?',
+      text: "Cette action est irréversible.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Oui, supprimer',
+      cancelButtonText: 'Annuler',
+    });
+
+    if (result.isConfirmed) {
       await deleteDoc(doc(db, 'dates', id));
+      MySwal.fire('Supprimée !', 'La date a été supprimée avec succès.', 'success');
     }
   };
 
@@ -91,22 +104,20 @@ export default function DatesPage() {
       </PageHeader>
 
       {dates.length === 0 ? (
-  <Loading>🎤 Aucune date de tournée enregistrée pour le moment.</Loading>
-) : (
-  <Grid>
-    {dates.map((d) => (
-      <DateCard
-        key={d.id}
-        {...d}
-        onEdit={() => handleEdit(d.id)}
-        onDelete={() => handleDelete(d.id)}
-      />
-    ))}
-  </Grid>
-)}
+        <Loading>🎤 Aucune date de tournée enregistrée pour le moment.</Loading>
+      ) : (
+        <Grid>
+          {dates.map((d) => (
+            <DateCard
+              key={d.id}
+              {...d}
+              onEdit={() => handleEdit(d.id)}
+              onDelete={() => handleDelete(d.id)}
+            />
+          ))}
+        </Grid>
+      )}
 
-
-      {/*  Bouton "Se déconnecter" en bas à droite */}
       <FixedLogout>
         <Button variant="secondary" onClick={logout}>
           Se déconnecter
